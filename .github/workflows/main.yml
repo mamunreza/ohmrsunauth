@@ -1,0 +1,31 @@
+name: Publish 🚀
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - 'OMS*'
+
+env:
+  AZURE_WEBAPP_NAME: ohmrsunauthapi
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Restore
+        run: dotnet restore ./src/OmsAuth.sln
+        
+      - name: Build
+        run: dotnet build ./src/OmsAuth.sln --configuration Release --no-restore
+
