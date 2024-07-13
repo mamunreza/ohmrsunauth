@@ -74,6 +74,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        package: ${{ github.workspace }}/src/OmsAuthApi/bin/Release/net8.0/publish/Core
+        package: ${{ github.workspace }}/src/OmsAuthApi/bin/Release/net8.0/publish
         # package: ./publish/Core
 
