@@ -13,7 +13,7 @@ permissions:
 
 env:
   AZURE_WEBAPP_NAME: omsauth
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  # AZURE_WEBAPP_PACKAGE_PATH: "./publish"
   DOTNET_VERSION: '8.0.x'
 
 jobs:
@@ -30,16 +30,16 @@ jobs:
           # dotnet-version: '8.0.x'
           
       - name: Restore
-        run: dotnet restore ./src/OmsAuth.sln
+        run: dotnet restore ./src/OmsAuthApi/OmsAuthApi.csproj
         
       - name: Build
-        run: dotnet build ./src/OmsAuth.sln --configuration Release --no-restore
+        run: dotnet build ./src/OmsAuthApi/OmsAuthApi.csproj --configuration Release --no-restore
 
       # - name: Run tests
       #   run: dotnet test --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish ./src/OmsAuth.sln -c Release -o ${{ github.workspace }}/publish
+        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
 
   deploy:
     runs-on: ubuntu-latest
