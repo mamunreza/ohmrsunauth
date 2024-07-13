@@ -41,6 +41,12 @@ jobs:
       - name: Publish
         run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
 
+      - name: Upload Core artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Core
+          path: ./Publish/Core
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -67,5 +73,5 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        package: ${{ github.workspace }}/publish
+        package: ${{ github.workspace }}/publish/Core
 
