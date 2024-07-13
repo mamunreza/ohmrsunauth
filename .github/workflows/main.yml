@@ -39,7 +39,8 @@ jobs:
       #   run: dotnet test --no-build --verbosity normal
 
       - name: Publish
-        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
+        # run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
+        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release
 
       - name: Upload Core artifacts
         uses: actions/upload-artifact@v3
@@ -73,5 +74,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        package: ${{ github.workspace }}/publish/Core
+        # package: ${{ github.workspace }}/publish/Core
+        package: ./publish/Core
 
