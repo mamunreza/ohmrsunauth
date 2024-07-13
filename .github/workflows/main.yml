@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Core
-          path: ./Publish/Core
+          path: ./src/OmsAuthApi/bin/Release/net8.0/publish/Core
 
   deploy:
     runs-on: ubuntu-latest
@@ -74,6 +74,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        # package: ${{ github.workspace }}/publish/Core
-        package: ./publish/Core
+        package: ${{ github.workspace }}/src/OmsAuthApi/bin/Release/net8.0/publish/Core
+        # package: ./publish/Core
 
