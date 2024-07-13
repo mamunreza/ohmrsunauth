@@ -8,7 +8,7 @@ on:
     - 'OMS*'
 
 env:
-  AZURE_WEBAPP_NAME: ohmrsunauthapi
+  AZURE_WEBAPP_NAME: omsauth
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
@@ -35,4 +35,31 @@ jobs:
 
       - name: Publish
         run: dotnet publish ./src/OmsAuth.sln -c Release -o ${{ github.workspace }}/publish
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Authenticate with Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        slot-name: 'production'
+        package: ${{ github.workspace }}/publish
 
