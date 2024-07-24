@@ -40,7 +40,7 @@ jobs:
 
       - name: Publish
         # run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
-        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release
+        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{env.DOTNET_ROOT}}/oms-auth-app
 
       - name: Upload Core artifacts
         uses: actions/upload-artifact@v3
