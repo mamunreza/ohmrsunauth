@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: oms-auth-app
-          path: ${{env.DOTNET_ROOT}}/omsauth
+          path: ${{env.DOTNET_ROOT}}/oms-auth-app
 
   deploy:
     runs-on: ubuntu-latest
