@@ -40,14 +40,7 @@ jobs:
       #   run: dotnet test --no-build --verbosity normal
 
       - name: Publish
-        # run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{ github.workspace }}/publish
         run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{env.DOTNET_ROOT}}/oms-auth-app
-
-      # - name: Upload Core artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: Core
-      #     path: ./src/OmsAuthApi/bin/Release/net8.0/publish/Core
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -87,6 +80,4 @@ jobs:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         # slot-name: 'production'
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        # package: ${{ github.workspace }}/src/OmsAuthApi/bin/Release/net8.0/publish
-        # package: ./publish/Core
 
