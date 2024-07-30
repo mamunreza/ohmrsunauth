@@ -1,4 +1,4 @@
-name: Publish 🚀
+name: OMS CI_CD
 
 on:
   workflow_dispatch:
@@ -7,9 +7,15 @@ on:
     - main
     - 'OMS*'
 
+permissions:
+  id-token: write
+  contents: write
+
 env:
-  AZURE_WEBAPP_NAME: ohmrsunauthapi
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  AZURE_WEBAPP_NAME: omsauth
+  AZURE_WEBAPP_PACKAGE_PATH: '.' 
+  # AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   build:
@@ -21,11 +27,62 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          # dotnet-version: '8.0.x'
           
       - name: Restore
-        run: dotnet restore ./src/OmsAuth.sln
-        
+        run: dotnet restore ./src/OmsAuthApi/OmsAuthApi.csproj
+
+      - name: Update appsettings.json
+        run: |
+          echo "Updating appsettings.json with secrets"
+          jq '.Jwt.Key = "${{ secrets.JWT_SIGNING_KEY }}"' ./src/OmsAuthApi/appsettings.json > tmp.$$.json && mv tmp.$$.json ./src/OmsAuthApi/appsettings.json
+          
       - name: Build
-        run: dotnet build ./src/OmsAuth.sln --configuration Release --no-restore
+        run: dotnet build ./src/OmsAuthApi/OmsAuthApi.csproj --configuration Release --no-restore
+
+      # - name: Run tests
+      #   run: dotnet test --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish ./src/OmsAuthApi/OmsAuthApi.csproj -c Release -o ${{env.DOTNET_ROOT}}/oms-auth-app
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: oms-auth-app
+          path: ${{env.DOTNET_ROOT}}/oms-auth-app
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v4
+      with:
+        name: oms-auth-app
+
+    - name: Authenticate with Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        # slot-name: 'production'
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
