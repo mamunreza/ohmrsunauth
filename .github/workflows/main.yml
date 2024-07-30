@@ -36,7 +36,7 @@ jobs:
       - name: Update appsettings.json
         run: |
           echo "Updating appsettings.json with secrets"
-          jq '.Jwt.Key = "${{ secrets.JWT_SIGNING_KEY }}"' appsettings.json > tmp.$$.json && mv tmp.$$.json appsettings.json
+          jq '.Jwt.Key = "${{ secrets.JWT_SIGNING_KEY }}"' ./src/OmsAuthApi/appsettings.json > tmp.$$.json && mv tmp.$$.json ./src/OmsAuthApi/appsettings.json
           
       - name: Build
         run: dotnet build ./src/OmsAuthApi/OmsAuthApi.csproj --configuration Release --no-restore
