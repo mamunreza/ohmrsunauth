@@ -88,6 +88,16 @@ namespace OmsAuthApi
                 };
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: "CorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
@@ -101,6 +111,7 @@ namespace OmsAuthApi
 
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.UseCors("CorsPolicy");
 
             app.MapIdentityApi<IdentityUser>();
 
