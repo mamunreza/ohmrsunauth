@@ -1,0 +1,11 @@
+
+services:
+  omsauthapi:
+    build:
+      context: ../src/OmsAuthApi/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
