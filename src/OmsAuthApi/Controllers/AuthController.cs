@@ -22,7 +22,8 @@ public class AuthController : ControllerBase
     public IActionResult Login([FromBody] LoginRequest request)
     {
         // Validate user credentials (this is just an example, use a proper user validation)
-        if (request.Email == "string@string.com" && request.Password == "String!1")
+        //if (request.Email == "string@string.com" && request.Password == "String!1")
+        if (request.Email == "admin@oms.com" && request.Password == "admin")
         {
             var token = GenerateJwtToken(request.Email);
             return Ok(new { token });
