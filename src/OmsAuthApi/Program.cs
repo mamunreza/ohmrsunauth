@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OmsAuthApi.Data;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Text;
 
 namespace OmsAuthApi;
@@ -62,12 +61,14 @@ public class Program
         });
 
         //Add Identity & JWT authentication
-        //Identity
         builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
         {
-            //options.SignIn.RequireConfirmedAccount = true; // Require email confirmation
-            //options.SignIn.RequireConfirmedEmail = true;   // Email confirmation needed
-        }).AddEntityFrameworkStores<DataContext>();
+            options.SignIn.RequireConfirmedAccount = true; // Require email confirmation
+            options.SignIn.RequireConfirmedEmail = true;   // Email confirmation needed
+        }).AddEntityFrameworkStores<DataContext>()
+          .AddDefaultTokenProviders();
+        //.AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>(TokenOptions.DefaultProvider);
+
         builder.Services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequireDigit = true;
@@ -76,17 +77,7 @@ public class Program
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 4;
             options.User.RequireUniqueEmail = true;
-            options.Tokens.EmailConfirmationTokenProvider = "email";
-        });
-
-        // Email validation after user registration
-        
-
-
-
-        builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
-        {
-            opt.TokenLifespan = TimeSpan.FromHours(2);
+            //options.Tokens.EmailConfirmationTokenProvider = "email";
         });
 
         //builder.Services.AddIdentity<IdentityUser, IdentityRole>()
